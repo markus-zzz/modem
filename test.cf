@@ -1,0 +1,7 @@
++define+SIMULATION
++libext+.v+.vlib
+testbench.v
+modem_axi_slave.v
+modem_axi_top.v
+support/dpram.v
+
