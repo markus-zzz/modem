@@ -1,7 +1,9 @@
 +define+SIMULATION
 +libext+.v+.vlib
-testbench.v
-modem_axi_slave.v
-modem_axi_top.v
-support/dpram.v
+sim/testbench.v
+rtl/verilog/modem_axi_slave.v
+rtl/verilog/modem_axi_top.v
+rtl/verilog/rx_ctrl.v
+rtl/verilog/tx_ctrl.v
+rtl/verilog/support/dpram.v
 

@@ -107,7 +107,6 @@ void put_msg(const char *msg)
 	*/
 
 	uint32_t free_space = (tx_rp <= tx_wp) ?  tx_size - (tx_wp - tx_rp) - 4 : (tx_rp - tx_wp) - 4;
-	printf("free_space : %d\n", free_space);
 	if (free_space < msg_byte_len + 4 /* header */) {
 		return;
 	}
@@ -133,8 +132,6 @@ void get_msg()
 		return;
 	}
 
-	printf("rx_rp: %x\n", rx_rp);
-
 	uint32_t msg_byte_len = axi_master_read(rx_base_addr + rx_rp);
 	uint32_t msg_word_len = (msg_byte_len >> 2) + (msg_byte_len & 0x3 ? 1 : 0);
 
@@ -147,7 +144,7 @@ void get_msg()
 
 	char *msg = (char*)&buf[0];
 	msg[msg_byte_len] = '\0';
-	printf("\nmsg: len=%d '%s'\n", msg_byte_len, msg);
+	printf("get_msg: len=%3d '%s'\n", msg_byte_len, msg);
 }
 
 void dump_rx()
@@ -189,36 +186,21 @@ int main(void)
     printf("Connected.\n");
 
 	/* begin - test */
-	for (int i = 0; i < 100; i++)
-	put_msg("Hello World123456");
-	put_msg("Dummy you.");
-	put_msg("FooBar");
 
 	dump_rx();
-	dump_rx();
-#if 0
-	return 0;
 
-	/* Busy wait until tx_rp == tx_wp */
-	while (1) {
-		uint32_t tx_rp = axi_master_read(0x800);
-		uint32_t tx_wp = axi_master_read(0x804);
-		if (tx_rp == tx_wp) {
-			break;
-		}
-		printf(".");
+	const char origstr[] = "0123456789abcdef";
+	char tmpstr[sizeof(origstr)];
+	printf("sizeof(origstr)=%ld\n", sizeof(origstr));
+	for (int i = 4; i <= 16; i++) {
+		strcpy(tmpstr, origstr);
+		tmpstr[i] = '\0';
+		printf("put_msg: '%s'\n", tmpstr);
+		put_msg(tmpstr);
 	}
-#endif
-
-#if 1
-	get_msg();
-	get_msg();
-	get_msg();
-	get_msg();
-	get_msg();
-	get_msg();
-#endif
-
+	for (int i = 1; i <= 16; i++) {
+		get_msg();
+	}
 	/* end - test */
 
     close(axi_master_socket_sync);
