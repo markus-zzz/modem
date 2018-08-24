@@ -46,7 +46,7 @@ module tb;
 	wire [15:0] x;
 	wire [15:0] y;
 
-	assign x = (idx == 32 || idx == 40) ? 1 : 0;
+	assign x = (idx == 32 || idx == 33) ? 1 : 0;
 
 	always @(posedge clk) begin
 		if (rst) begin
