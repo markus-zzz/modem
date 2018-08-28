@@ -26,8 +26,8 @@ module tb;
 	wire y_valid;
 
 	cmplx_conv # (
-	  .aw(4),
-	  .ntaps(4),
+	  .aw(6),
+	  .ntaps(60),
 	  .coeffs("coeffs.dat"))
 	dut (
 	  .clk(clk),
@@ -46,7 +46,12 @@ module tb;
 	wire [15:0] x;
 	wire [15:0] y;
 
-	assign x = (idx == 32 || idx == 33) ? 1 : 0;
+	// Insert alternating (-1,1) symbol every 8th sample (rest is zeros)
+//	assign x = (idx[2:0] == 0) ? (idx[3] ? 1 : -1) : 0;
+	assign x = (idx[2:0] == 0) ? xx[idx[15:3]] : 0;
+
+	reg [15:0] xx[0:15];
+
 
 	always @(posedge clk) begin
 		if (rst) begin
@@ -58,6 +63,23 @@ module tb;
 	end
 
 	initial begin
+		xx[0] = 1;
+		xx[1] = 1;
+		xx[2] = 1;
+		xx[3] = 1;
+		xx[4] = -1;
+		xx[5] = -1;
+		xx[6] = -1;
+		xx[7] = 1;
+		xx[8] = 1;
+		xx[9] = -1;
+		xx[10] = 1;
+		xx[11] = 1;
+		xx[12] = -1;
+		xx[13] = 1;
+		xx[14] = -1;
+		xx[15] = 1;
+
 		$dumpvars;
 		clk = 0;
 		rst = 1;
@@ -65,7 +87,7 @@ module tb;
 		#5
 		rst = 0;
 
-		# 1000 $finish;
+		# 80000 $finish;
 	end
 
 	always clk = #1 ~clk;
